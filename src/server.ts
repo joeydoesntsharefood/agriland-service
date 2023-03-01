@@ -1,16 +1,11 @@
 import { localConfig } from '@config/_localConfig'
-import express from 'express'
+import app from './app'
 import database from './config/database'
 
-const app = express()
 const port = localConfig.server.port ?? undefined
 const host = localConfig.server.host ?? undefined
 
-database()
-
-app.get('/', (req, res) => {
-  return res.json({ message: 'teste' })
-})
+// database()
 
 app.listen({
   port,
@@ -23,4 +18,3 @@ app.listen({
     console.log(`Server is running on ${host}:${port}`)
   }
 })
-
