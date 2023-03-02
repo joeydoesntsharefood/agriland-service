@@ -1,8 +1,7 @@
 import { localConfig } from '@config/_localConfig'
 import app from './app'
-import database from './config/database'
 
-const port = localConfig.server.port ?? undefined
+const port = process.env.NODE_ENV === 'production' ? process.env.PORT : localConfig.server.port
 const host = localConfig.server.host ?? undefined
 
 // database()
