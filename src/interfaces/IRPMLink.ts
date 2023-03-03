@@ -1,4 +1,4 @@
 export interface IRPMLink {
-  id: string
+  id: number
 	link: string
 }

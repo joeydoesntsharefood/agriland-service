@@ -1,4 +1,4 @@
 export interface ILocation {
-  id: string
+  id: number
 	name: string
 }

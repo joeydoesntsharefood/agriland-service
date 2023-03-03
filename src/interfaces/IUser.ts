@@ -1,7 +1,7 @@
 export interface IUser {
   id: number
   firstAccess: boolean
-  accessLeve: string
+  accessLevel: string
   name: string
   phone: string
   areaOfIntrest: string
@@ -10,11 +10,12 @@ export interface IUser {
   corpEmail: string
   corp: string
   role: string
-  acceptTerms: string
+  acceptTerms: boolean
   passwordHash: string
   passwordSalt: string
   verificationToken: string
   verifiedAt: string
   passwordResetToken: string
   resetTokenExpires: string
+  rpmId: number
 }
