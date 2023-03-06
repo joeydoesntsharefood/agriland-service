@@ -1,8 +1,12 @@
 import { IRequests } from "src/interfaces/globals"
 import { rpmLinkListData } from "./mockdata"
 
-export const RPMList: IRequests = (request, response) => {
-  return response.json({ data: rpmLinkListData, message: 'Encontramos os seguintes links.', success: true })
+export const RPMList: IRequests = async (request, response) => {
+  const sql = 'SELECT * FROM RPMLink;'
+
+  const [row] = await connection.query(sql)
+
+  return response.json({ data: row, message: 'Encontramos os seguintes links.', success: true })
 }
 
 export const RPMIndex: IRequests = (request, response) => {
@@ -11,7 +15,13 @@ export const RPMIndex: IRequests = (request, response) => {
   return response.json({ data: rpmLinkListData[Number(id) - 1 ?? 0], message: 'Encontramos o link solicitado.', success: true })
 }
 
-export const RPMCreate: IRequests = (request, response) => {
+export const RPMCreate: IRequests = async (request, response) => {
+  const values = request.body
+
+  const sql = 'INSERT INTO RPMLink(id, link) VALUES (?, ?, ?);'
+
+  await connection.query(sql, values)
+
   return response.json({ message: 'O link foi criado com sucesso.', success: true })
 }
 
