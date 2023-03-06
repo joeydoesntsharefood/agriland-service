@@ -5,6 +5,7 @@ import { RPMCreate, RPMDelete, RPMEdit, RPMIndex, RPMList } from "@controllers/R
 import { LocationCreate, LocationDelete, LocationEdit, LocationIndex, LocationList } from "@controllers/LocationController"
 import { PainelsCreate, PainelsDelete, PainelsEdit, PainelsIndex, PainelsList } from "@controllers/PainelsController"
 import { UserCreate, UserDelete, UserEdit, UserIndex, UserList } from "@controllers/UserController"
+import { AuthSignin } from "@controllers/AuthsController"
 
 const router = Router()
 // Hello World
@@ -39,5 +40,7 @@ router.get('/user/:id', UserList)
 router.post('/user', UserIndex)
 router.post('/user/:id', UserEdit)
 router.post('/user/:id/delete', UserDelete)
+// Auths Routes
+router.post('/signin', AuthSignin)
 
 export default router
