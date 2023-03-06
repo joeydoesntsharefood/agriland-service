@@ -1,28 +1,26 @@
 import mysql from 'mysql2/promise'
-import consoleTime from 'src/utils/consoleTime'
 import { localConfig } from './_localConfig'
 
 const connect = async () => {
-  const stringDba: string | undefined = localConfig.server.stringDba ?? undefined
-  const stringName: string | undefined = localConfig.server.stringName ?? undefined
-
-  if (!stringDba || !stringName) {
-    console.log(`Fail connect with DB ${stringName}`)
-    return null
-  }
+  const prod = process.env.NODE_ENV === 'production' ? 'dba' : 'dbaDev'
 
   if (global.connection && global.connection !== "disconnected")
     return global.connection
 
   try {
-    const connection = await mysql.createConnection(stringDba)
-    consoleTime.success(`Connect with DB ${stringName}`)
+    const connection = await mysql.createConnection({
+      host: localConfig?.[prod].host,
+      user: localConfig?.[prod].user,
+      password: localConfig?.[prod].password,
+      database: localConfig?.[prod].data,
+      port: localConfig?.[prod].port
+    })
+    console.log(`Connect with DB ${localConfig.dba.data}`)
     
     global.connection = connection
   
     return connection
   } catch (err: any) {
-    consoleTime.error(`Fail connect with DB ${stringName}`)
     console.log(err)
   }
 }

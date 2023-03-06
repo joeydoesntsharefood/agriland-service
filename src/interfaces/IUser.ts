@@ -12,7 +12,7 @@ export interface IUser {
   role: string
   acceptTerms: boolean
   passwordHash: string
-  passwordSalt: string
+  passwordSalt: number
   verificationToken: string
   verifiedAt: string
   passwordResetToken: string
