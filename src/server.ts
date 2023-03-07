@@ -1,11 +1,16 @@
 import { localConfig } from '@config/_localConfig'
 import app from './app'
 import connect from '@config/database'
+import cors from 'cors'
 
 const port = process.env.NODE_ENV === 'production' ? process.env.PORT : localConfig.server.port
 const host = localConfig.server.host ?? undefined
 
 connect()
+
+app.use(cors({ 
+  origin: '*'
+}))
 
 app.listen({
   port,

@@ -25,3 +25,17 @@ export interface ISchedulings {
   }
   invitesId: Array<Number>
 }
+
+export interface DBAISchedulings {
+  id: number
+  ownerId: number
+  isEventOpen: boolean
+  hostId: number
+  eventName: string
+  chain: string
+  placeId: number
+  placeName: string
+  startAt: string
+  endAt: string
+  invitesId: Array<Number>
+}

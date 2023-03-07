@@ -22,7 +22,7 @@ export const AuthSignin: IRequests = async (request, response) => {
 
   const [row] = conn.query(sql)
 
-  if (row.passwordHash === values.password) return response.json({ message: 'Dados do usuario', success: true, data: row })
+  console.log(row)
 
   return response.json({ message: 'Não foi possível logar. Dados incorretos.', success: false })
 }
