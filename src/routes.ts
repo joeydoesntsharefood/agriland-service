@@ -6,6 +6,7 @@ import { LocationCreate, LocationDelete, LocationEdit, LocationIndex, LocationLi
 import { PainelsCreate, PainelsDelete, PainelsEdit, PainelsIndex, PainelsList } from "@controllers/PainelsController"
 import { UserCreate, UserDelete, UserEdit, UserIndex, UserList } from "@controllers/UserController"
 import { AuthSignin, AuthSignup } from "@controllers/AuthsController"
+import { Redirect } from "@controllers/RedirectController"
 
 const router = Router()
 // Hello World
@@ -30,8 +31,8 @@ router.post('/location/:id', LocationEdit)
 router.post('/location/:id/delete', LocationDelete)
 // Painels Routes
 router.post('/painels', PainelsCreate)
-router.get('/painels/:id', PainelsList)
-router.get('/painels', PainelsIndex)
+router.get('/painels', PainelsList)
+router.get('/painels/:id', PainelsIndex)
 router.post('/painels/:id', PainelsEdit)
 router.post('/painels/:id/delete', PainelsDelete)
 // User Routes
@@ -43,5 +44,7 @@ router.post('/user/:id/delete', UserDelete)
 // Auths Routes
 router.post('/signin', AuthSignin)
 router.post('/signup', AuthSignup)
+// Redirect Routes
+router.post('/redirect', Redirect)
 
 export default router
