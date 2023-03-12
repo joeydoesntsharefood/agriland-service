@@ -1,24 +1,22 @@
 import { localConfig } from '@config/_localConfig'
-import app from './app'
-import connect from '@config/database'
+import express from 'express'
+import router from './routes'
 import cors from 'cors'
+import connect from '@config/database'
+import logMiddleware from './middleware'
+
+// const app = express()
 
 const port = process.env.NODE_ENV === 'production' ? process.env.PORT : localConfig.server.port
-const host = localConfig.server.host ?? undefined
+
+const app = express();
 
 connect()
 
-app.use(cors({ 
-  origin: '*'
-}))
+app.use(cors());
 
-app.listen({
-  port,
-  callback: (err: any) => {
-    if (err) {
-        console.log(err);
-        process.exit(1);
-    }
-    console.log(`Server is running on ${host}:${port}`)
-  }
+app.use('/', logMiddleware, router);
+
+app.listen(port, () => {
+  console.log(`Node server listening on port ${port}`)
 })

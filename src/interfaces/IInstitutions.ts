@@ -1,4 +1,15 @@
 export interface IInstitution {
-  id: string
+  id: number
   name: string
 }
+
+export const institutionsList: Array<IInstitution> = [
+  {
+     id: 1,
+     name: 'Embrapa'
+  },
+  {
+    id: 2,
+    name: 'Itaú'
+  }
+]

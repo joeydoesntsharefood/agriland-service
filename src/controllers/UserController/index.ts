@@ -1,6 +1,11 @@
 import connect from "@config/database"
 import { IRequests } from "src/interfaces/globals"
 
+const emailValidator = (email: string) => {
+  var re = /\S+@\S+\.\S+/;
+  return re.test(email);
+}
+
 export const UserList: IRequests = async (request, response) => {
   const conn = await connect()
 
@@ -8,7 +13,7 @@ export const UserList: IRequests = async (request, response) => {
 
   const [row] = await conn.query(sql)
 
-  return response.json({ data: row, message: 'Encontramos os seguintes links.', success: true })
+  return response.json({ data: row, message: 'Encontramos os seguintes usuários.', success: true })
 }
 
 export const UserIndex: IRequests = async (request, response) => {
@@ -20,19 +25,38 @@ export const UserIndex: IRequests = async (request, response) => {
 
   const [row] = await conn.query(sql)
 
-  return response.json({ data: row, message: 'Encontramos o link solicitado.', success: true })
+  return response.json({ data: row, message: 'Encontramos o usuário solicitado.', success: true })
 }
 
 export const UserCreate: IRequests = async (request, response) => {
-  const conn = await connect()
+  try {
+    const values = request.body
+    let errors = []
 
-  const values = request.body
+    const { 
+      name,
+      lastName,
+      email,
+      accessLevel
+    } = values
 
-  const sql = `INSERT INTO User (id, firstAccess, accessLevel, name, phone, areaOfIntrest, partOf, email, corpEmail, corp, role, acceptTerms, passwordHash, passwordSalt, verificationToken, verifiedAt, passwordResetToken, resetTokenExpires, rpmId) VALUES (${values.id}, ${values.firstAccess}, ${values.accessLevel}, ${values.name}, ${values.phone}, ${values.areaOfIntrest}, ${values.partOf}, ${values.email}, ${values.corpEmail}, ${values.corp}, ${values.role}, ${values.acceptTerms}, ${values.passwordHash}, ${values.passwordSalt}, ${values.verificationToken}, ${values.verifiedAt}, ${values.passwordResetToken}, ${values.resetTokenExpires}, ${values.rpmId})`
+    if (!name) errors.push({ message: 'Insira um nome válido.', key: 'name' })
+    if (!lastName) errors.push({ message: 'Insira um sobrenome válido.', key: 'lastName' })
+    if (!email || !emailValidator(email)) errors.push({ message: 'Insira um e-mail válido.', key: 'email' })
+    if (!accessLevel) errors.push({ message: 'Selecione um level de acesso.', key: 'accessLevel' })
 
-  await conn.query(sql)
+    if (errors.length !== 0) return response.status(422).send({ message: 'Alguns campos estão invalídos.', error: errors })
+    
+    const conn = await connect()
 
-  return response.json({ message: 'O link foi criado com sucesso.', success: true })
+    const sql = `INSERT INTO User (instituition, firstAccess, accessLevel, name, lastName, phone, areaOfIntrest, partOf, email, corpEmail, corp, role, acceptTerms, passwordHash, passwordSalt, verificationToken, verifiedAt, passwordResetToken, resetTokenExpires, rpmId) VALUES ('${values.institution}', ${true}, '${values.accessLevel}', '${values.name}', '${values.lastName}', '${values.phone}', '', false, '${values.email}', '', '', '', ${false}, '', 10, '', '', '', '', 0)`
+
+    await conn.query(sql)
+
+    return response.json({ message: 'O usuário foi pré cadastrado.', success: true })
+  } catch (err: any) {
+    return response.json({ message: 'Algo não saiu conforme o esperado.' })
+  }
 }
 
 export const UserDelete: IRequests = async (request, response) => {
@@ -44,9 +68,9 @@ export const UserDelete: IRequests = async (request, response) => {
 
   await conn.query(sql)
 
-  return response.json({ message: 'O link foi deletado com sucesso.', success: true })
+  return response.json({ message: 'O usuário foi deletado com sucesso.', success: true })
 }
 
 export const UserEdit: IRequests = async (request, response) => {
-  return response.json({ message: 'O link foi editado com sucesso.', success: true })
+  return response.json({ message: 'O usuário foi editado com sucesso.', success: true })
 }

@@ -1,5 +1,6 @@
 import connect from "@config/database"
 import { IRequests } from "src/interfaces/globals"
+import bcrypt from 'bcrypt'
 
 export const AuthSignup: IRequests = async (request, response) => {
   const conn = await connect()
@@ -14,15 +15,47 @@ export const AuthSignup: IRequests = async (request, response) => {
 }
 
 export const AuthSignin: IRequests = async (request, response) => {
-  const values = request.body
+  console.log('bateu')
+  try {
+    const { email, password } = request.body
 
-  const conn = await connect()
+    if (!email || !password) return response.json({ message: 'Insira os dados de acesso.', success: false })
 
-  const sql = `SELECT * from User WHERE email='${values.email}'`
+    const conn = await connect()
+  
+    const sql = `SELECT * from User WHERE email='spntn.mateus@gmail.com'`
+  
+    const [row] = await conn.query(sql)
 
-  const [row] = conn.query(sql)
+    const dbaValues = row[0]
 
-  console.log(row)
+    if (dbaValues?.email !== email) throw new Error('E-mail não cadastrado')
 
-  return response.json({ message: 'Não foi possível logar. Dados incorretos.', success: false })
+    const compare = await bcrypt.compare(password, dbaValues?.passwordHash)
+
+    if (!compare) return response.json({ message: 'Os dados de acesso estão incorretos.', success: false })
+
+    const userData = {
+      accessLevel: dbaValues?.accessLevel,
+      name: dbaValues?.name,
+      phone: dbaValues?.phone,
+      areaOfIntrest: dbaValues?.areaOfIntrest,
+      partOf: dbaValues?.partOf,
+      email: dbaValues?.email,
+      corpEmail: dbaValues?.corpEmail,
+      corp: dbaValues?.corp,
+      role: dbaValues?.role,
+      rpmId: dbaValues?.rpmId,
+      instituition: dbaValues?.instituition,
+      lastName: dbaValues?.lastName,
+      occupation: dbaValues?.occupation,
+    }
+  
+    return response.json({ message: 'Foi possível autenticar os dados', success: true, userData })
+  } catch (err: any) {
+    return response.json({ message: err?.message })
+  }
 }
+
+
+

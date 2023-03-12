@@ -1,15 +1,38 @@
 import connect from "@config/database"
 import { IRequests } from "src/interfaces/globals"
-import { scheduleDataList } from "./mockdata"
+
+const formatData = (value: any) => {
+  let startAt
+  let endAt
+  if (value.startAt) {
+    const [date, time] = value.startAt.split('T')
+
+    const [year, month, day] = date.split('-')
+    const [hour, minute] = time.split(':')
+
+    startAt = { day, month, year, hour, minute, seconds: 0 }
+  }
+  if (value.endAt) {
+    const [date, time] = value.endAt.split('T')
+
+    const [year, month, day] = date.split('-')
+    const [hour, minute] = time.split(':')
+
+    endAt = { day, month, year, hour, minute, seconds: 0 }
+  }
+
+  return { ...value, startAt, endAt }
+}
 
 export const ScheduleList: IRequests = async (request, response) => {
+  const { search } = request.query
   const conn = await connect()
 
-  const sql = 'SELECT * FROM Schedule;'
+  const sql = search ? `SELECT * FROM Schedule WHERE eventName LIKE '${search}%';` : 'SELECT * FROM Schedule;'
 
   const [row] = await conn.query(sql)
 
-  return response.json({ data: row, message: 'Encontramos os seguintes eventos.', success: true })
+  return response.json({ data: row.map(formatData), message: 'Encontramos os seguintes eventos.', success: true })
 }
 
 export const ScheduleIndex: IRequests = async (request, response) => {
@@ -21,7 +44,7 @@ export const ScheduleIndex: IRequests = async (request, response) => {
 
   const [row] = await conn.query(sql)
 
-  return response.json({ data: row, message: 'Encontramos o evento solicitado.', success: true })
+  return response.json({ data: formatData(row), message: 'Encontramos o evento solicitado.', success: true })
 }
 
 export const ScheduleCreate: IRequests = async (request, response) => {
@@ -29,30 +52,9 @@ export const ScheduleCreate: IRequests = async (request, response) => {
 
   const values = request.body
 
-  const sql = `INSERT INTO Schedule (id
-    ownerId,
-    isEventOpen,
-    hostId,
-    eventName,
-    chain,
-    placeId,
-    placeName,
-    startAt,
-    endAt,
-    invitesId) VALUES (${values.id},
-    ${values.ownerId},
-    ${values.isEventOpen},
-    ${values.hostId},
-    ${values.eventName},
-    ${values.chain},
-    ${values.placeId},
-    ${values.placeName},
-    ${values.startAt},
-    ${values.endAt},
-    ${values.invitesId});`
-
+  const sql = `INSERT INTO Schedule (ownerId, isEventOpen, hostId, eventName, chain, placeId, placeName, startAt, endAt, invitesId) VALUES ('${values.ownerId}', ${values.isEventOpen}, '${values.hostId}', '${values.eventName}', '${values.chain}', ${values.placeId}, '${values.placeName}', '${values.startAt}', '${values.endAt}', '${values.invitesId}');`
+  
   await conn.query(sql)
-
   return response.json({ message: 'O link foi criado com sucesso.', success: true })
 }
 
